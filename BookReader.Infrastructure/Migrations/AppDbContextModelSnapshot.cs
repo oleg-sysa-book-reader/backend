@@ -58,6 +58,50 @@ namespace BookReader.Infrastructure.Migrations
 
                     b.ToTable("books", (string)null);
                 });
+
+            modelBuilder.Entity("BookReader.Core.Entities.Chapter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SelectorIndex")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.ToTable("chapters", (string)null);
+                });
+
+            modelBuilder.Entity("BookReader.Core.Entities.Chapter", b =>
+                {
+                    b.HasOne("BookReader.Core.Entities.Book", "Book")
+                        .WithMany("Chapters")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("BookReader.Core.Entities.Book", b =>
+                {
+                    b.Navigation("Chapters");
+                });
 #pragma warning restore 612, 618
         }
     }
