@@ -87,6 +87,41 @@ namespace BookReader.Infrastructure.Migrations
                     b.ToTable("chapters", (string)null);
                 });
 
+            modelBuilder.Entity("BookReader.Core.Entities.Translation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("SourceLang")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)");
+
+                    b.Property<string>("SourceWord")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TargetLang")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)");
+
+                    b.Property<string>("TranslatedWord")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceLang", "TargetLang", "SourceWord")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Translations_Search");
+
+                    b.ToTable("translations", (string)null);
+                });
+
             modelBuilder.Entity("BookReader.Core.Entities.Chapter", b =>
                 {
                     b.HasOne("BookReader.Core.Entities.Book", "Book")
