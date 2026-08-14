@@ -144,12 +144,11 @@ namespace BookReader.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<string>("GoogleId")
+                    b.Property<string>("ExternalId")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("RoleId")
@@ -160,12 +159,16 @@ namespace BookReader.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("GoogleId")
-                        .IsUnique();
+                    b.HasIndex("ExternalId")
+                        .IsUnique()
+                        .HasFilter("\"ExternalId\" IS NOT NULL");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_User_PasswordOrExternalId", "\"PasswordHash\" IS NOT NULL OR \"ExternalId\" IS NOT NULL");
+                        });
                 });
 
             modelBuilder.Entity("BookReader.Core.Entities.User", b =>
