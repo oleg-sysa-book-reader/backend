@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Repositories;
+using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
 using BookReader.Core.Entities;
@@ -40,7 +40,7 @@ namespace BookReader.Core.Business
         {
             var sourceLang = _config["Translation:SourceLang"]!;
             var targetLang = _config["Translation:TargetLang"]!;
-            var translationEntity = await _translationRespository.GetAsync(sourceLang, targetLang, word, token);
+            var translationEntity = await _translationRepository.GetAsync(sourceLang, targetLang, word, token);
             if (translationEntity == null) 
                 return new ServiceResult<bool>(false, $"Translation for word '{word}' not found.");
 

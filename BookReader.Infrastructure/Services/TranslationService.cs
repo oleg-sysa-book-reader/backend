@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Repositories;
+using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.Business;
 using BookReader.Core.DTOs.Models;
@@ -15,9 +15,9 @@ namespace BookReader.Infrastructure.Services
     public class TranslationService : BaseService<TranslationService>, ITranslationService
     {
         private readonly ICacheService _cacheService;
-        private readonly ITranslationRespository _translationRespository;
+        private readonly ITranslationRepository _translationRespository;
         public TranslationService(ICacheService cacheService,
-            ITranslationRespository translationRespository,
+            ITranslationRepository translationRespository,
             IConfiguration config,
             ILogger<TranslationService> logger,
             IHttpContextAccessor httpContextAccessor) : base(config, logger, httpContextAccessor)
@@ -31,7 +31,7 @@ namespace BookReader.Infrastructure.Services
             {
                 var sourceLang = _config["Translation:SourceLang"]!;
                 var targetLang = _config["Translation:TargetLang"]!;
-                var translationKey = input.BuildChacheTranslationKey(sourceLang, targetLang);
+                var translationKey = input.BuildCacheTranslationKey(sourceLang, targetLang);
                 var cachedTranslation = await _cacheService.GetAsync<string>(translationKey);
                 if (!string.IsNullOrEmpty(cachedTranslation))
                     return new ServiceResult<string>(cachedTranslation, string.Empty);
