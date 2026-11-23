@@ -32,5 +32,23 @@ namespace BookReader.API.Controllers
                 StatusCodes.Status400BadRequest;
             return GenerateResponse(code, res);
         }
+
+        [HttpPost("import")]
+        [Consumes("multipart/form-data")]
+        public IActionResult ImportWords([FromForm] IFormFile file)
+        {
+            return StatusCode(StatusCodes.Status501NotImplemented);
+        }
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportWords(CancellationToken token)
+        {
+            var res = await _learningService.ExportUserLearningWordsAsync(UserId, token);
+            return File(
+                res.Data!.result,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "learning-words.xlsx");
+
+        }
     }
 }

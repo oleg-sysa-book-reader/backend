@@ -13,9 +13,11 @@ namespace BookReader.Core.Business
         private readonly ILearningRepository _learningRepository;
         private readonly ITranslationRepository _translationRepository;
         private readonly ICacheService _cacheService;
+        private readonly IExcelService _excelService;
         public LearningService(ICacheService cacheService,
             ITranslationRepository translationRepository,
             ILearningRepository learningRepository,
+            IExcelService excelService,
             IConfiguration config,
             ILogger<LearningService> logger,
             IHttpContextAccessor httpContextAccessor) : base(config, logger, httpContextAccessor)
@@ -23,6 +25,17 @@ namespace BookReader.Core.Business
             _cacheService = cacheService;
             _translationRepository = translationRepository;
             _learningRepository = learningRepository;
+            _excelService = excelService;
+        }
+
+        public async Task<ServiceResult<LearningWordsExportResult>> ExportUserLearningWordsAsync(int userId, CancellationToken token)
+        {
+            var words = await _learningRepository.GetLearningWordsWithValues(userId, token);
+            using var stream = _excelService.ExportLearningWords(words);
+            using var resultStream = new MemoryStream();
+            stream.CopyTo(resultStream);
+            var result = new LearningWordsExportResult(resultStream.ToArray());
+            return new ServiceResult<LearningWordsExportResult>(result, null);
         }
 
         public async Task<ServiceResult<LearningWordsResult>> GetUserVocabulary(int userId, int pageSize, int pageNumber, CancellationToken token)

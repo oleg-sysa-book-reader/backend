@@ -6,5 +6,6 @@ namespace BookReader.Core.Abstract.Services
     {
         Task<ServiceResult<bool>> LearnWord(int userId, string word, CancellationToken token);
         Task<ServiceResult<LearningWordsResult>> GetUserVocabulary(int userId, int pageSize, int pageNumber, CancellationToken token);
+        Task<ServiceResult<LearningWordsExportResult>> ExportUserLearningWordsAsync(int userId, CancellationToken token);
     }
 }
