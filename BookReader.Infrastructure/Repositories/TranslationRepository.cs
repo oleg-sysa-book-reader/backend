@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Repositories;
+using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Entities;
 using BookReader.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +30,5 @@ namespace BookReader.Infrastructure.Repositories
                 t.TargetLang == targetLang &&
                 t.SourceWord == input, token);
         }
-
     }
 }

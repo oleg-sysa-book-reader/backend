@@ -1,11 +1,8 @@
-﻿using BookReader.Core.Abstract.Repositories;
+using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.DTOs.Models;
 using BookReader.Core.Entities;
 using BookReader.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BookReader.Infrastructure.Repositories
 {

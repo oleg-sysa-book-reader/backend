@@ -1,4 +1,5 @@
-﻿using BookReader.Core.Abstract.Services;
+using BookReader.API.Models.Requests;
+using BookReader.Core.Abstract.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookReader.API.Controllers
@@ -23,9 +24,9 @@ namespace BookReader.API.Controllers
             return GenerateResponse(code, res);
         }
         [HttpGet]
-        public async Task<IActionResult> GetUserVocabulary(CancellationToken token)
+        public async Task<IActionResult> GetUserVocabulary([FromQuery]BasePaginationRequest request, CancellationToken token)
         {
-            var res = await _learningService.GetUserVocabulary(UserId, token);
+            var res = await _learningService.GetUserVocabulary(UserId, request.pageSize, request.pageNumber, token);
             var code = res.IsSuccess ?
                 StatusCodes.Status200OK :
                 StatusCodes.Status400BadRequest;

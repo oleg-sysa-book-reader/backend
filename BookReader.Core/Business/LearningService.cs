@@ -4,13 +4,8 @@ using BookReader.Core.DTOs.Models;
 using BookReader.Core.Entities;
 using BookReader.Core.Extensions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace BookReader.Core.Business
 {
     public class LearningService : BaseService<LearningService>, ILearningService
@@ -30,10 +25,21 @@ namespace BookReader.Core.Business
             _learningRepository = learningRepository;
         }
 
-        public async Task<ServiceResult<List<LearningWordModel>>> GetUserVocabulary(int userId, CancellationToken token)
+        public async Task<ServiceResult<LearningWordsResult>> GetUserVocabulary(int userId, int pageSize, int pageNumber, CancellationToken token)
         {
-            var data = await _learningRepository.GetLearningWordsWithValues(userId, token);
-            return new ServiceResult<List<LearningWordModel>>(data, null);
+            var cachekey = $"user-vocabulary-{userId}";
+            var data = await _cacheService.GetAsync<List<LearningWordModel>>(cachekey);
+            if (data.IsNullOrEmpty())
+            {
+                data = await _learningRepository.GetLearningWordsWithValues(userId, token);
+                await _cacheService.SetAsync(cachekey, data);
+            }
+            
+            var paginated = data?.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList() ?? new List<LearningWordModel>();
+            var totalPages = (int)Math.Ceiling((double)(data?.Count ?? 0) / pageSize);
+            var totalCount = data?.Count ?? 0;
+            var response = new LearningWordsResult(totalPages, totalCount, paginated);
+            return new ServiceResult<LearningWordsResult>(response, null);
         }
 
         public async Task<ServiceResult<bool>> LearnWord(int userId, string word, CancellationToken token)

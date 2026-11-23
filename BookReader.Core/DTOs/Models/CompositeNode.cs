@@ -1,6 +1,5 @@
-﻿using BookReader.Core.Abstract.Business;
+using BookReader.Core.Abstract.Business;
 using BookReader.Core.Enums;
-using System.Text.Json.Serialization;
 
 namespace BookReader.Core.DTOs.Models
 {

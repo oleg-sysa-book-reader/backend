@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace BookReader.Core.DTOs.Models
 {
     public class LearningWordModel
