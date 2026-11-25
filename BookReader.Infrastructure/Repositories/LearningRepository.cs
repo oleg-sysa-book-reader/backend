@@ -17,6 +17,15 @@ namespace BookReader.Infrastructure.Repositories
             await SaveChangesAsync();
         }
 
+        public async Task AddWordsAsync(IReadOnlyCollection<LearningWord> learningWords, CancellationToken token)
+        {
+            if (learningWords.Count == 0)
+                return;
+
+            _context.LearningWords.AddRange(learningWords);
+            await _context.SaveChangesAsync(token);
+        }
+
         public async Task<List<LearningWord>> GetLearningWords(int userId, CancellationToken token, int? translationId = null) =>
             await _context.LearningWords
                 .Where(lw => lw.UserId == userId && (translationId == null || translationId == lw.TranslationId))

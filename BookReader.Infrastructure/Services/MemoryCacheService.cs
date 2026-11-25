@@ -1,9 +1,5 @@
-﻿using BookReader.Core.Abstract.Services;
+using BookReader.Core.Abstract.Services;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
 
 namespace BookReader.Infrastructure.Services
 {

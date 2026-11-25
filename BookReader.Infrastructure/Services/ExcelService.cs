@@ -6,6 +6,27 @@ namespace BookReader.Infrastructure.Services;
 
 public sealed class ExcelService : IExcelService
 {
+    public IReadOnlyCollection<string> ReadLearningWords(Stream stream)
+    {
+        ArgumentNullException.ThrowIfNull(stream);
+
+        using var workbook = new XLWorkbook(stream);
+        var worksheet = workbook.Worksheets.FirstOrDefault();
+        if (worksheet == null)
+            return Array.Empty<string>();
+
+        var words = worksheet.Column(1)
+            .CellsUsed()
+            .Select(cell => cell.GetString().Trim())
+            .Where(value => !string.IsNullOrWhiteSpace(value))
+            .ToList();
+
+        if (words.Count > 0 && string.Equals(words[0], "English word", StringComparison.OrdinalIgnoreCase))
+            words.RemoveAt(0);
+
+        return words;
+    }
+
     public Stream ExportLearningWords(IReadOnlyCollection<LearningWordModel> words)
     {
         ArgumentNullException.ThrowIfNull(words);

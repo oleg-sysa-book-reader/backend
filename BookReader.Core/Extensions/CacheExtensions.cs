@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,6 +10,8 @@ namespace BookReader.Core.Extensions
             $"translation:{sourceLang}:{targetLang}:{input.ToLower()}";
         public static string BuildCacheBookKey(int userId, int bookId) =>
             $"parsedbooks:{userId}:{bookId}";
+        public static string BuildCacheLearningWordsKey(int userId) =>
+          $"user-vocabulary-{userId}";
 
     }
 }

@@ -64,31 +64,46 @@ namespace BookReader.Infrastructure.Services
             }
         }
 
+        public async Task<ServiceResult<List<Translation>>> TranslateBatchAsync(List<string> words, CancellationToken token)
+        {
+            try
+            {
+                var sourceLang = _config["Translation:SourceLang"]!;
+                var targetLang = _config["Translation:TargetLang"]!;
+                var translationResult = await ExecuteBatchTraslation(words, token);
+                var newTranslations = new List<Translation>();
+                foreach (var toAdd in translationResult)
+                {
+                    var translationEntity = new Translation()
+                    {
+                        SourceLang = sourceLang,
+                        TargetLang = targetLang,
+                        SourceWord = toAdd.Key,
+                        TranslatedWord = toAdd.Value
+                    };
+                    newTranslations.Add(translationEntity);
+                    var translationKey = translationEntity.SourceWord.BuildCacheTranslationKey(sourceLang, targetLang);
+                    await _cacheService.SetAsync<string>(translationKey, toAdd.Value);
+                }
+                if (!newTranslations.IsNullOrEmpty())
+                {
+                    await _translationRespository.AddTranslationBatchAsync(newTranslations, token);
+                }
+
+                return new ServiceResult<List<Translation>>(newTranslations, string.Empty);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Cannot translate input string. Error: {message}", e.Message);
+                return new ServiceResult<List<Translation>>(new List<Translation>(), e.Message);
+            }
+        }
+
         public async Task<ServiceResult<string>> TranslateSentenceAsync(int sentenceId, string value, CancellationToken token)
         {
             try
             {
-               
-                //var translationKey = input.BuildChacheKey(sourceLang, targetLang);
-                //var cachedTranslation = await _cacheService.GetAsync<string>(translationKey);
-                //if (!string.IsNullOrEmpty(cachedTranslation))
-                    //return new ServiceResult<string>(cachedTranslation, string.Empty);
-
                 var result = await ExecuteTraslation(value, token);
-                //var translationEntity = await _translationRespository.GetAsync(sourceLang, targetLang, input, token);
-                //if (translationEntity == null)
-                //{
-                //    translationEntity = new Translation()
-                //    {
-                //        SourceLang = sourceLang,
-                //        TargetLang = targetLang,
-                //        SourceWord = input,
-                //        TranslatedWord = result
-                //    };
-                //    await _translationRespository.AddTranslationAsync(translationEntity, token);
-                //}
-
-               // await _cacheService.SetAsync<string>(translationKey, result);
                 return new ServiceResult<string>(result, string.Empty);
             }
             catch (Exception e)
@@ -108,6 +123,23 @@ namespace BookReader.Infrastructure.Services
                 null,
                 LanguageCode.Ukrainian, cancellationToken: token);
             return translatedText.Text;
+        }
+
+        private async Task<Dictionary<string, string>> ExecuteBatchTraslation(List<string> inputs, CancellationToken token)
+        {
+            var apikey = _config["ApiKeys:DeplKey"]!;
+            var client = new DeepLClient(apikey);
+
+            var translatedList = await client.TranslateTextAsync(
+                inputs,
+                null,
+                LanguageCode.Ukrainian, cancellationToken: token);
+
+            return inputs.Select((input, index) => new
+            {
+                Original = input,
+                Translation = translatedList[index].Text
+            }).ToDictionary(x => x.Original, x => x.Translation);
         }
     }
 }
