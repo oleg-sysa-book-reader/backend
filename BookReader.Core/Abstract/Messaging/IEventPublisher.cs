@@ -1,4 +1,4 @@
-﻿namespace BookReader.Core.Abstract.Events
+namespace BookReader.Core.Abstract.Events
 {
     public interface IEventPublisher
     {

@@ -1,4 +1,7 @@
-﻿using BookReader.Core.Abstract.Repositories;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
 using BookReader.Core.Entities;
@@ -7,9 +10,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace BookReader.Core.Business
 {
@@ -100,7 +100,7 @@ namespace BookReader.Core.Business
                     ExternalId = userIdentifier
                 };
                 await _userRepository.AddAsync(user);
-            }   
+            }
 
             var existingUser = await _userRepository.GetAsync(user.Email, token);
             if (existingUser == null)

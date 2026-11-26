@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Events;
+using BookReader.Core.Abstract.Events;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BookReader.Infrastructure.Services.Messaging

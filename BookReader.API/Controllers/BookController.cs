@@ -1,9 +1,9 @@
-﻿using BookReader.API.Models.Requests;
+using System.Security.Claims;
+using BookReader.API.Models.Requests;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BookReader.API.Controllers
 {

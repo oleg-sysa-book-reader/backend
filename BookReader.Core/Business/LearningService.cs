@@ -1,7 +1,10 @@
+using BookReader.Core.Abstract.Events;
 using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
 using BookReader.Core.Entities;
+using BookReader.Core.Enums;
+using BookReader.Core.Events;
 using BookReader.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +18,7 @@ namespace BookReader.Core.Business
         private readonly ITranslationService _translationService;
         private readonly ICacheService _cacheService;
         private readonly IExcelService _excelService;
+        private readonly IEventPublisher _eventPublisher;
         public LearningService(ICacheService cacheService,
             ITranslationRepository translationRepository,
             ITranslationService translationService,
@@ -22,6 +26,7 @@ namespace BookReader.Core.Business
             IExcelService excelService,
             IConfiguration config,
             ILogger<LearningService> logger,
+            IEventPublisher eventPublisher,
             IHttpContextAccessor httpContextAccessor) : base(config, logger, httpContextAccessor)
         {
             _cacheService = cacheService;
@@ -29,6 +34,7 @@ namespace BookReader.Core.Business
             _translationService = translationService;
             _learningRepository = learningRepository;
             _excelService = excelService;
+            _eventPublisher = eventPublisher;
         }
 
         public async Task<ServiceResult<LearningWordsExportResult>> ExportUserLearningWordsAsync(int userId, CancellationToken token)
@@ -45,46 +51,64 @@ namespace BookReader.Core.Business
             Stream stream,
             CancellationToken token)
         {
-            var words = _excelService.ReadLearningWords(stream)
-                .Select(word => word.Trim())
-                .Where(word => !string.IsNullOrWhiteSpace(word))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            if (words.Count == 0)
-                return new ServiceResult<bool>(false, "Can not parse words for import");
-
-            var sourceLang = _config["Translation:SourceLang"]!;
-            var targetLang = _config["Translation:TargetLang"]!;
-            var duplicateCleanedList = words.GroupBy(w=> w.ToLowerInvariant())
-                .Select(g => g.First())
-                .ToList();
-            
-            var existingTranslations = await _translationRepository.GetAllTranslationsByValuesAsync(duplicateCleanedList, token);
-            var existingTranslationsSet = existingTranslations.Select(t=> t.SourceWord).ToHashSet();
-            var wordsForTranslate = duplicateCleanedList.Except(existingTranslationsSet, StringComparer.OrdinalIgnoreCase).ToList();
-            var translatedWordsResult = await _translationService.TranslateBatchAsync(wordsForTranslate, token);
-            var allTranlations = existingTranslations.Union(translatedWordsResult.Data).ToDictionary(t=> t.SourceWord);
-            var userVocabulary = await _learningRepository.GetLearningWordsWithValues(userId, token);
-            var vocabularySet = userVocabulary.Select(v => v.SourceValue).ToHashSet(StringComparer.OrdinalIgnoreCase);
-            var newWordsForLearning = new List<LearningWord>();
-            foreach (var word in duplicateCleanedList)
+            try
             {
-                if (vocabularySet.Contains(word) || !allTranlations.TryGetValue(word, out var toAdd))
-                    continue;
+                var words = _excelService.ReadLearningWords(stream)
+                    .Select(word => word.Trim())
+                    .Where(word => !string.IsNullOrWhiteSpace(word))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
 
-                newWordsForLearning.Add( new LearningWord()
+                if (words.Count == 0)
+                    return new ServiceResult<bool>(false, "Can not parse words for import");
+
+                var sourceLang = _config["Translation:SourceLang"]!;
+                var targetLang = _config["Translation:TargetLang"]!;
+                var duplicateCleanedList = words.GroupBy(w => w.ToLowerInvariant())
+                    .Select(g => g.First())
+                    .ToList();
+
+                var existingTranslations = await _translationRepository.GetAllTranslationsByValuesAsync(duplicateCleanedList, token);
+                var existingTranslationsSet = existingTranslations.Select(t => t.SourceWord).ToHashSet();
+                var wordsForTranslate = duplicateCleanedList.Except(existingTranslationsSet, StringComparer.OrdinalIgnoreCase).ToList();
+                var translatedWordsResult = await _translationService.TranslateBatchAsync(wordsForTranslate, token);
+                var allTranlations = existingTranslations.Union(translatedWordsResult.Data).ToDictionary(t => t.SourceWord);
+                var userVocabulary = await _learningRepository.GetLearningWordsWithValues(userId, token);
+                var vocabularySet = userVocabulary.Select(v => v.SourceValue).ToHashSet(StringComparer.OrdinalIgnoreCase);
+                var newWordsForLearning = new List<LearningWord>();
+                foreach (var word in duplicateCleanedList)
                 {
-                    UserId = userId,
-                    TranslationId = toAdd.Id
-                });
+                    if (vocabularySet.Contains(word) || !allTranlations.TryGetValue(word, out var toAdd))
+                        continue;
+
+                    newWordsForLearning.Add(new LearningWord()
+                    {
+                        UserId = userId,
+                        TranslationId = toAdd.Id
+                    });
+                }
+
+                await _learningRepository.AddWordsBatchAsync(newWordsForLearning, token, false);
+                await _learningRepository.SaveChangesAsync(token);
+                var updatedListToLearn = await _learningRepository.GetLearningWordsWithValues(userId, token);
+                var cachekey = CacheExtensions.BuildCacheLearningWordsKey(userId);
+                await _cacheService.SetAsync(cachekey, updatedListToLearn);
+                await _eventPublisher.PublishAsync("excel-notifications",
+                        new ExcelImportNotificationEvent(userId, ExcelImportStatus.Success),
+                        CorrelationId,
+                        token);
+                return new ServiceResult<bool>(true, null);
             }
-                
-            await _learningRepository.AddWordsAsync(newWordsForLearning, token);
-            var updatedListToLearn = await _learningRepository.GetLearningWordsWithValues(userId, token);
-            var cachekey = CacheExtensions.BuildCacheLearningWordsKey(userId);
-            await _cacheService.SetAsync(cachekey, updatedListToLearn);
-            return new ServiceResult<bool>(true,null);
+            catch (Exception e)
+            {
+                var message = "Failed to import words";
+                await _eventPublisher.PublishAsync("excel-notifications",
+                     new ExcelImportNotificationEvent(userId, ExcelImportStatus.Error, message),
+                     CorrelationId,
+                     token);
+                _logger.LogError(e, message, userId);
+                return new ServiceResult<bool>(false, message);
+            }
         }
 
         public async Task<ServiceResult<bool>> DeleteUserLearningWordAsync(int userId, int learningWordId, CancellationToken token)
@@ -109,7 +133,7 @@ namespace BookReader.Core.Business
                 data = await _learningRepository.GetLearningWordsWithValues(userId, token);
                 await _cacheService.SetAsync(cachekey, data);
             }
-            
+
             var paginated = data?.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList() ?? new List<LearningWordModel>();
             var totalPages = (int)Math.Ceiling((double)(data?.Count ?? 0) / pageSize);
             var totalCount = data?.Count ?? 0;
@@ -122,11 +146,11 @@ namespace BookReader.Core.Business
             var sourceLang = _config["Translation:SourceLang"]!;
             var targetLang = _config["Translation:TargetLang"]!;
             var translationEntity = await _translationRepository.GetAsync(sourceLang, targetLang, word, token);
-            if (translationEntity == null) 
+            if (translationEntity == null)
                 return new ServiceResult<bool>(false, $"Translation for word '{word}' not found.");
 
             var savedWords = await _learningRepository.GetLearningWords(userId, token, translationEntity.Id);
-            if(!savedWords.IsNullOrEmpty())
+            if (!savedWords.IsNullOrEmpty())
                 return new ServiceResult<bool>(false, $"This word already in learning from this user.");
 
             var learnWord = new LearningWord

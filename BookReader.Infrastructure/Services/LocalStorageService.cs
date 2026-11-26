@@ -1,13 +1,10 @@
-﻿using BookReader.Core.Abstract.Business;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.Business;
 using BookReader.Core.DTOs.Models;
-using BookReader.Core.Entities;
 using BookReader.Core.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace BookReader.Infrastructure.Services
 {
@@ -19,8 +16,8 @@ namespace BookReader.Infrastructure.Services
             IHttpContextAccessor httpContextAccessor) : base(_config, logger, httpContextAccessor)
         {
         }
-        public async Task<UploadFileResult> SaveBookToStorageAsync(string storagePath, Stream stream, 
-            string fileName,int userId,CancellationToken token)
+        public async Task<UploadFileResult> SaveBookToStorageAsync(string storagePath, Stream stream,
+            string fileName, int userId, CancellationToken token)
         {
             var storageUserPath = Path.Combine(storagePath, userId.ToString());
             if (string.IsNullOrEmpty(storageUserPath))
@@ -61,11 +58,11 @@ namespace BookReader.Infrastructure.Services
             {
                 Directory.CreateDirectory(bookPath);
             }
-            
+
             return new UploadFileResult(BookStatus.Ready, bookPath);
         }
 
-        public Task<Stream> GetBookAsync(string path, CancellationToken cancellationToken = default)  => 
+        public Task<Stream> GetBookAsync(string path, CancellationToken cancellationToken = default) =>
             Task.FromResult<Stream>(File.OpenRead(path));
         public Task<Stream> GetParsedBookAsync(string path, CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();

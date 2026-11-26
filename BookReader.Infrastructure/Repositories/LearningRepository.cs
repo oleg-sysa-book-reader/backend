@@ -14,16 +14,19 @@ namespace BookReader.Infrastructure.Repositories
         public async Task AddWordAsync(LearningWord learningWord, CancellationToken token)
         {
             _context.LearningWords.Add(learningWord);
-            await SaveChangesAsync();
+            await SaveChangesAsync(token);
         }
 
-        public async Task AddWordsAsync(IReadOnlyCollection<LearningWord> learningWords, CancellationToken token)
+        public async Task AddWordsBatchAsync(IReadOnlyCollection<LearningWord> learningWords, CancellationToken token, bool enforceSaving = true)
         {
             if (learningWords.Count == 0)
                 return;
 
             _context.LearningWords.AddRange(learningWords);
-            await _context.SaveChangesAsync(token);
+            if (enforceSaving)
+            {
+                await _context.SaveChangesAsync(token);
+            }
         }
 
         public async Task<bool> DeleteWordAsync(int userId, int learningWordId, CancellationToken token)
@@ -48,7 +51,8 @@ namespace BookReader.Infrastructure.Repositories
             return _context.LearningWords
                 .Include(lw => lw.Translation)
                 .Where(lw => lw.UserId == userId && (translationId == null || translationId == lw.TranslationId))
-                .Select(lw=> new LearningWordModel() { 
+                .Select(lw => new LearningWordModel()
+                {
                     SourceValue = lw.Translation.SourceWord,
                     Id = lw.Id,
                     TranslationId = lw.TranslationId,

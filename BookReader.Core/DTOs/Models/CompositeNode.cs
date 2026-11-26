@@ -7,7 +7,7 @@ namespace BookReader.Core.DTOs.Models
     {
         public List<ITextElement> Children { get; set; } = new();
         public required TextNodeType NodeType { get; init; }
-        public Dictionary<string, string> Attributes { get; set; } = new ();
+        public Dictionary<string, string> Attributes { get; set; } = new();
         public int CharsCount => Children.Sum(c => c.CharsCount);
 
         public string GetText()
@@ -20,7 +20,7 @@ namespace BookReader.Core.DTOs.Models
     {
         public required TextNodeType NodeType { get; init; }
         public required string Value { get; init; }
-        public Dictionary<string, string> Attributes { get; set; } = new ();
+        public Dictionary<string, string> Attributes { get; set; } = new();
         public int CharsCount => Value.Length;
         public string GetText() => Value;
     }

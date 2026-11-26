@@ -10,27 +10,9 @@ namespace BookReader.Infrastructure.Repositories
             _context = context;
         }
 
-        public Task SaveChangesAsync()
+        public Task SaveChangesAsync(CancellationToken token)
         {
-            return _context.SaveChangesAsync();
+            return _context.SaveChangesAsync(token);
         }
-
-        //public  Task<bool> ExecuteInTransactionAsync(CancellationToken token, Func<CancellationToken, Task<bool>> func)
-        //{
-        //     using var transaction = _context.Database.BeginTransactionAsync();
-
-        //    try
-        //    {
-        //        var res = func(token);
-        //        transaction.CommitAsync();
-        //        return res;
-        //    }
-        //    catch
-        //    {
-        //        await transaction.RollbackAsync();
-        //        throw;
-        //    }
-           
-        //}
     }
 }

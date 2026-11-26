@@ -12,7 +12,7 @@ namespace BookReader.Infrastructure.Services
         }
         public Task<T?> GetAsync<T>(string key)
         {
-           if(!_memoryCache.TryGetValue(key, out T? value))
+            if (!_memoryCache.TryGetValue(key, out T? value))
             {
                 return Task.FromResult<T?>(default);
             }
@@ -21,12 +21,12 @@ namespace BookReader.Infrastructure.Services
 
         public async Task RemoveAsync(string key)
         {
-           _memoryCache.Remove(key);
+            _memoryCache.Remove(key);
         }
 
         public async Task SetAsync<T>(string key, T value, TimeSpan? expiration = null)
         {
-           _memoryCache.Set(key, value, expiration ?? TimeSpan.FromMinutes(30));
+            _memoryCache.Set(key, value, expiration ?? TimeSpan.FromMinutes(30));
         }
 
         public async Task SetBatchAsync<T>(Dictionary<string, T> dict, TimeSpan? expiration = null)

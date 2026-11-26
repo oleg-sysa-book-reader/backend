@@ -1,8 +1,5 @@
-﻿using BookReader.Core.DTOs.Models;
+using BookReader.Core.DTOs.Models;
 using BookReader.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BookReader.Core.Extensions.Mappings
 {

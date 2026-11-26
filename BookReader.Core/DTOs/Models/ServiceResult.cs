@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace BookReader.Core.DTOs.Models
 {
-    public class ServiceResult<T> {
+    public class ServiceResult<T>
+    {
         public ServiceResult(T data, string? error)
         {
             Data = data;

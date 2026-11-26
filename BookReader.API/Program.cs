@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json.Serialization;
 using Azure.Identity;
 using BookReader.API.Middleware;
 using BookReader.Infrastructure.DependencyInjection;
@@ -7,8 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace BookReader.API
 {

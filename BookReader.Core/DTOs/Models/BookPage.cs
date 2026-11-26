@@ -1,7 +1,4 @@
-﻿using BookReader.Core.Abstract.Business;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using BookReader.Core.Abstract.Business;
 
 namespace BookReader.Core.DTOs.Models
 {

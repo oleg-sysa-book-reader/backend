@@ -1,4 +1,5 @@
-﻿using BookReader.Core.Abstract.Events;
+using System.Text.Json;
+using BookReader.Core.Abstract.Events;
 using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.Business;
@@ -10,7 +11,6 @@ using BookReader.Core.Extensions.Mappings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace BookReader.Core.Services
 {
@@ -179,8 +179,8 @@ namespace BookReader.Core.Services
                     CorrelationId = CorrelationId
                 };
 
-                await _outboxMessageRepository.AddAsync(outboxMessage, false);
-                await _bookRepository.SaveChangesAsync();
+                await _outboxMessageRepository.AddAsync(outboxMessage, token, false);
+                await _bookRepository.SaveChangesAsync(token);
 
                 return new ServiceResult<bool>(true, null);
             }

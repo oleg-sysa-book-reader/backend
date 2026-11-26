@@ -1,5 +1,4 @@
-﻿using BookReader.Core.DTOs.Models;
-using BookReader.Core.Entities;
+using BookReader.Core.DTOs.Models;
 namespace BookReader.Core.Abstract.Services
 {
     public interface IDocumentNodeService

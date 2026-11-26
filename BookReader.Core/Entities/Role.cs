@@ -1,4 +1,4 @@
-﻿namespace BookReader.Core.Entities
+namespace BookReader.Core.Entities
 {
     public class Role
     {

@@ -1,7 +1,6 @@
-﻿using BookReader.Core.Abstract.Services;
+using BookReader.Core.Abstract.Services;
 using BookReader.Core.Events;
 using MassTransit;
-using Serilog.Context;
 
 namespace BookReader.BookProcessor.Consumers
 {

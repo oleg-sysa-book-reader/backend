@@ -1,14 +1,10 @@
-﻿using AngleSharp;
-using AngleSharp.Css.Dom;
+using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using BookReader.Core.Abstract.Business;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
 using BookReader.Core.Enums;
-using BookReader.Core.Extensions;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using VersOne.Epub;
 namespace BookReader.Core.Business.Parsers
 {
@@ -53,7 +49,7 @@ namespace BookReader.Core.Business.Parsers
                     {
                         paragraph.Attributes.Add("style", pStyles);
                     }
-                    
+
                     if (string.IsNullOrEmpty(p.TextContent))
                         continue;
 
@@ -75,20 +71,21 @@ namespace BookReader.Core.Business.Parsers
                         var words = s.Split(' ', ',');
                         for (int k = 0; k < words.Length; k++)
                         {
-                           var w = words[k];
-                           var textValue = new TextNode()
-                           {
-                              Value = w,
-                              NodeType = TextNodeType.Word
-                           };
+                            var w = words[k];
+                            var textValue = new TextNode()
+                            {
+                                Value = w,
+                                NodeType = TextNodeType.Word
+                            };
                             textValue.Attributes.Add("data-word-id", k.ToString());
-                            sentenceTextObject.Children.Add(textValue);                           
+                            sentenceTextObject.Children.Add(textValue);
                         }
                     }
                 }
-               // chapterElement.CharsCount = chapterElement.Children.Sum(p => p.CharsCount);
+                // chapterElement.CharsCount = chapterElement.Children.Sum(p => p.CharsCount);
             }
-            var bookNode = new CompositeNode() { 
+            var bookNode = new CompositeNode()
+            {
                 NodeType = TextNodeType.Document,
             };
             bookNode.Children.AddRange(chapters);

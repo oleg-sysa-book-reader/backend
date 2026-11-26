@@ -1,6 +1,5 @@
-﻿using BookReader.BookProcessor.Abstract;
+using BookReader.BookProcessor.Abstract;
 using BookReader.Core.Abstract.Repositories;
-using BookReader.Core.Enums;
 
 namespace BookReader.BookProcessor.Services
 {

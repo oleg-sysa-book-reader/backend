@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Events;
+using BookReader.Core.Abstract.Events;
 using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
@@ -38,7 +38,7 @@ public class BookServiceTests
             _publisher.Object,
             configuration,
             _outboxMessageRepo.Object,
-            _logger.Object, 
+            _logger.Object,
             _accessor.Object);
     }
 

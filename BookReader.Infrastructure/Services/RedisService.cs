@@ -1,10 +1,10 @@
-﻿using BookReader.Core.Abstract.Services;
+using System.Text.Json;
+using BookReader.Core.Abstract.Services;
 using BookReader.Core.Business;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
-using System.Text.Json;
 
 namespace BookReader.Infrastructure.Services
 {
@@ -35,7 +35,7 @@ namespace BookReader.Infrastructure.Services
         }
         public async Task SetBatchAsync<T>(Dictionary<string, T> dict, TimeSpan? expiration = null)
         {
-            var tasks = dict.Select(item => 
+            var tasks = dict.Select(item =>
             _database.StringSetAsync(item.Key, JsonSerializer.Serialize(item.Value), expiration, false));
             await Task.WhenAll(tasks);
         }

@@ -1,4 +1,4 @@
-﻿namespace BookReader.API.Models.Responses
+namespace BookReader.API.Models.Responses
 {
     public class ApiResponse<T>
     {

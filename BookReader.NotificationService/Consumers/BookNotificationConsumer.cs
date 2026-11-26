@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Events;
+using BookReader.Core.Events;
 using BookReader.NotificationService.Abstract;
 using MassTransit;
 

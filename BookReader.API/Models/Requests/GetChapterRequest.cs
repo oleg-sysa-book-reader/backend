@@ -1,4 +1,4 @@
-﻿namespace BookReader.API.Models.Requests
+namespace BookReader.API.Models.Requests
 {
     public class GetChapterRequest
     {

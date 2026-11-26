@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Events;
+using BookReader.Core.Abstract.Events;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.Events;
 

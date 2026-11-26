@@ -35,7 +35,7 @@ namespace BookReader.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUserVocabulary([FromQuery]BasePaginationRequest request, CancellationToken token)
+        public async Task<IActionResult> GetUserVocabulary([FromQuery] BasePaginationRequest request, CancellationToken token)
         {
             var res = await _learningService.GetUserVocabulary(UserId, request.pageSize, request.pageNumber, token);
             var code = res.IsSuccess ?

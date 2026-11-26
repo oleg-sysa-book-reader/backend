@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace BookReader.Core.Extensions
 {
     public static class CacheExtensions

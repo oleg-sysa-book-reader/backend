@@ -17,12 +17,15 @@ namespace BookReader.Infrastructure.Repositories
             return translation.Id;
         }
 
-        public async Task AddTranslationBatchAsync(List<Translation> toAddList, CancellationToken token)
+        public async Task AddTranslationBatchAsync(List<Translation> toAddList, CancellationToken token, bool enforceSaving = true)
         {
             foreach (var translationsChunk in toAddList.Chunk(CHUNK_SIZE))
             {
-               await _context.Translations.AddRangeAsync(translationsChunk);
-               await _context.SaveChangesAsync();
+                await _context.Translations.AddRangeAsync(translationsChunk);
+                if (enforceSaving)
+                {
+                    await _context.SaveChangesAsync();
+                }
             }
         }
 
@@ -31,14 +34,14 @@ namespace BookReader.Infrastructure.Repositories
 
         public Task<List<Translation>> GetAllTranslationsByValuesAsync(List<string> values, CancellationToken token)
         {
-           return _context.Translations
-                .Where(t => values.Contains(t.SourceWord))
-                .ToListAsync(token);
+            return _context.Translations
+                 .Where(t => values.Contains(t.SourceWord))
+                 .ToListAsync(token);
         }
 
         public async Task<Translation?> GetAsync(string sourceLang, string targetLang, string input, CancellationToken token)
         {
-            return await _context.Translations.FirstOrDefaultAsync(t => 
+            return await _context.Translations.FirstOrDefaultAsync(t =>
                 t.SourceLang == sourceLang &&
                 t.TargetLang == targetLang &&
                 t.SourceWord == input, token);

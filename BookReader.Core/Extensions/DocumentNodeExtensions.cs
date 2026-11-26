@@ -1,9 +1,3 @@
-﻿using BookReader.Core.DTOs.Models;
-using BookReader.Core.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace BookReader.Core.Extensions
 {
     public static class DocumentNodeExtensions

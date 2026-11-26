@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Repositories;
+using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -6,9 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BookReader.Core.Business
 {
@@ -17,7 +14,7 @@ namespace BookReader.Core.Business
         private readonly IServiceScopeFactory _scopeFactory;
         public WarmupService(IServiceScopeFactory scopeFactory,
             IConfiguration config,
-            ILogger<WarmupService>logger,
+            ILogger<WarmupService> logger,
             IHttpContextAccessor httpContextAccessor) : base(config, logger, httpContextAccessor)
         {
             _scopeFactory = scopeFactory;
@@ -33,7 +30,7 @@ namespace BookReader.Core.Business
                 t.SourceWord.BuildCacheTranslationKey(t.SourceLang, t.TargetLang),
                 t => t.TranslatedWord);
 
-           
+
             await cacheService.SetBatchAsync(translationDict);
         }
 

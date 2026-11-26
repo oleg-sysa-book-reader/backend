@@ -1,6 +1,5 @@
-﻿using BookReader.Core.DTOs.Models;
+using BookReader.Core.DTOs.Models;
 using BookReader.Core.Entities;
-using Microsoft.AspNetCore.Identity.Data;
 
 namespace BookReader.Core.Abstract.Services
 {

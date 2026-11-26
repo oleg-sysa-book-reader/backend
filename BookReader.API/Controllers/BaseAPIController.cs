@@ -1,7 +1,7 @@
-﻿using BookReader.API.Models.Responses;
+using System.Security.Claims;
+using BookReader.API.Models.Responses;
 using BookReader.Core.DTOs.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BookReader.API.Controllers
 {

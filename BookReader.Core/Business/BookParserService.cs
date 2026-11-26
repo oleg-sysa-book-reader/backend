@@ -1,14 +1,11 @@
-﻿using BookReader.Core.Abstract.Events;
+using BookReader.Core.Abstract.Events;
 using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
-using BookReader.Core.DTOs.Models;
-using BookReader.Core.Entities;
 using BookReader.Core.Enums;
 using BookReader.Core.Events;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace BookReader.Core.Business
 {
@@ -58,13 +55,13 @@ namespace BookReader.Core.Business
                 }
 
                 book.Status = BookStatus.ProcessingStarted;
-                await _repository.SaveChangesAsync();
+                await _repository.SaveChangesAsync(token);
                 await _eventPublisher.PublishAsync("book-notifications", new BookNotificationEvent(userId, bookId, book.Status), correlationId, token);
 
                 var bookNode = await parser.ParseFile(book.StoragePath);
                 book.ChaptersCount = bookNode.Children.Count;
                 book.Status = BookStatus.Parsed;
-                await _repository.SaveChangesAsync();
+                await _repository.SaveChangesAsync(token);
                 await _eventPublisher.PublishAsync("book-notifications", new BookNotificationEvent(userId, bookId, book.Status), correlationId, token);
                 _logger.LogInformation("[BOOKPROCESSOR] BOOK PARSED. BookId: {BookId}", bookId);
                 var savingResult = await _storageService.SaveParsedBookToStorageAsync(book.UserId, book.Id,
@@ -72,7 +69,7 @@ namespace BookReader.Core.Business
                         token);
                 book.ParsedFilesPath = savingResult.Path;
                 book.Status = BookStatus.Ready;
-                await _repository.SaveChangesAsync();
+                await _repository.SaveChangesAsync(token);
                 await _eventPublisher.PublishAsync("book-notifications", new BookNotificationEvent(userId, bookId, book.Status), correlationId, token);
                 _logger.LogInformation("[BOOKPROCESSOR] SAVED PARSED RESULT. BookId: {BookId}, STATUS:{Status}", bookId, savingResult.Status);
 

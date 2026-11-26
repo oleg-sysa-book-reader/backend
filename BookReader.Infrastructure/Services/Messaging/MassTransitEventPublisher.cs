@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Events;
+using BookReader.Core.Abstract.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +15,7 @@ namespace BookReader.Infrastructure.Services.Messaging
             _logger = logger;
         }
 
-        public async Task PublishAsync<TEvent>(string queueName, TEvent e, string? correlationId, CancellationToken cancellationToken) 
+        public async Task PublishAsync<TEvent>(string queueName, TEvent e, string? correlationId, CancellationToken cancellationToken)
             where TEvent : IBusinessEvent
         {
             _logger.LogInformation("Publishing message. CorrelationId: {CorrelationId}", correlationId);

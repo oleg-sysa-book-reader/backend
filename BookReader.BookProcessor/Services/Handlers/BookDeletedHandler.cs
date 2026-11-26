@@ -1,4 +1,5 @@
-﻿using BookReader.BookProcessor.Abstract;
+using System.Text.Json;
+using BookReader.BookProcessor.Abstract;
 using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
@@ -6,7 +7,6 @@ using BookReader.Core.Entities;
 using BookReader.Core.Enums;
 using BookReader.Core.Extensions;
 using Serilog.Context;
-using System.Text.Json;
 
 namespace BookReader.BookProcessor.Services.Handlers
 {
@@ -66,7 +66,7 @@ namespace BookReader.BookProcessor.Services.Handlers
                     }
                     finally
                     {
-                        await _outboxMessageRepository.SaveChangesAsync();
+                        await _outboxMessageRepository.SaveChangesAsync(token);
                         _logger.LogInformation("Completed message processing. Type: {EventType}, MessageId: {Id}", message.EventType, message.Id);
                     }
                 }

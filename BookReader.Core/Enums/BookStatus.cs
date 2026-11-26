@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace BookReader.Core.Enums
 {
     public enum BookStatus
@@ -13,6 +9,6 @@ namespace BookReader.Core.Enums
         Ready = 4,
         Failed = 5,
         Deleted = 6
-       
+
     }
 }

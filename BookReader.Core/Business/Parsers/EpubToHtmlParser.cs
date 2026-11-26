@@ -1,9 +1,7 @@
-﻿using AngleSharp;
-using AngleSharp.Dom;
-using BookReader.Core.Abstract.Services;
-using BookReader.Core.DTOs.Models;
-using BookReader.Core.Enums;
 using System.Text.RegularExpressions;
+using AngleSharp;
+using AngleSharp.Dom;
+using BookReader.Core.Enums;
 using VersOne.Epub;
 
 namespace BookReader.Core.Business.Parsers
@@ -22,9 +20,9 @@ namespace BookReader.Core.Business.Parsers
                 var context = BrowsingContext.New(Configuration.Default);
                 IDocument document = await context.OpenAsync(req => req.Content(chapter.Content));
                 var paragraphs = document.QuerySelectorAll(_selectors);
-                document.Body?.SetAttribute("data-chapter-id",index.ToString());
-                for (int i = 0; i < paragraphs.Count; i++) 
-                { 
+                document.Body?.SetAttribute("data-chapter-id", index.ToString());
+                for (int i = 0; i < paragraphs.Count; i++)
+                {
                     var p = paragraphs[i];
                     p.SetAttribute("data-paragraph-id", i.ToString());
                     var isImg = p.GetSelector() == "img";
@@ -49,8 +47,8 @@ namespace BookReader.Core.Business.Parsers
                         container.Append(sentenceSpan);
 
                         var words = s.Split(' ', ',');
-                        for (int k = 0; k < words.Length; k++) 
-                        { 
+                        for (int k = 0; k < words.Length; k++)
+                        {
                             var w = words[k];
                             var wordSpan = document.CreateElement("span");
                             wordSpan.TextContent = w;
@@ -85,9 +83,9 @@ namespace BookReader.Core.Business.Parsers
                         p.Append(container);
                     }
                 }
-               results.Add(index, document.DocumentElement.OuterHtml);
+                results.Add(index, document.DocumentElement.OuterHtml);
             }
-           return results;
+            return results;
         }
     }
 }

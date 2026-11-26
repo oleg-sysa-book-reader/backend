@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Entities;
+using BookReader.Core.Entities;
 
 namespace BookReader.Core.Abstract.Repositories
 {
@@ -6,7 +6,7 @@ namespace BookReader.Core.Abstract.Repositories
     {
         Task<Book?> GetByIdAsync(int bookId, CancellationToken token);
         Task<IReadOnlyCollection<Book>> GetByUserIdAsync(int userId, CancellationToken token);
-        Task<Book?> GetByUserAndFileNameAsync(int userId,string fileName, CancellationToken token);
+        Task<Book?> GetByUserAndFileNameAsync(int userId, string fileName, CancellationToken token);
         Task<bool> AddNewBookAsync(Book book);
         Task<bool> DeleteBookAsync(int bookId);
     }

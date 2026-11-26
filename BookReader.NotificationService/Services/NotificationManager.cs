@@ -1,11 +1,7 @@
-﻿using BookReader.NotificationService.Abstract;
-using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
-using Serilog;
+using BookReader.NotificationService.Abstract;
+using Microsoft.AspNetCore.Http;
 
 namespace BookReader.NotificationService.Services
 {
@@ -20,7 +16,7 @@ namespace BookReader.NotificationService.Services
         public void Add(int userId, HttpResponse response)
         {
             var connections = _connections.GetOrAdd(
-                userId, _  => new List<HttpResponse>());
+                userId, _ => new List<HttpResponse>());
 
             lock (connections)
             {

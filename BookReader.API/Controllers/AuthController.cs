@@ -1,11 +1,11 @@
-﻿using BookReader.API.Extensions;
+using System.Security.Claims;
+using BookReader.API.Extensions;
 using BookReader.API.Models.Requests;
 using BookReader.Core.Abstract.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BookReader.API.Controllers
 {

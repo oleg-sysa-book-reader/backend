@@ -8,7 +8,6 @@ using DeepL;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 namespace BookReader.Infrastructure.Services
 {

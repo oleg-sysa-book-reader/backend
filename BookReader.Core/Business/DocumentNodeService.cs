@@ -1,15 +1,14 @@
-﻿using AngleSharp;
+using System.Text.Json;
+using AngleSharp;
 using AngleSharp.Dom;
 using BookReader.Core.Abstract.Business;
 using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
-using BookReader.Core.Entities;
 using BookReader.Core.Enums;
 using BookReader.Core.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
 
 
 namespace BookReader.Core.Business
@@ -68,7 +67,7 @@ namespace BookReader.Core.Business
                     NumberOfPages = pages.Count,
                 };
             }
-            pageNumber = await UpdateBookmark(bookId, pageNumber, useBookmark);
+            pageNumber = await UpdateBookmark(bookId, pageNumber, useBookmark, token);
             bookState.IsLastPage = bookState.Pages.Count == 0 || bookState.Pages.Count == pageNumber;
             await _cacheService.SetAsync(cacheKey, bookState);
 
@@ -87,7 +86,7 @@ namespace BookReader.Core.Business
             return new ServiceResult<BookViewResult>(res, null);
         }
 
-        private async Task<int> UpdateBookmark(int bookId, int pageNumber, bool useBookmark)
+        private async Task<int> UpdateBookmark(int bookId, int pageNumber, bool useBookmark, CancellationToken token)
         {
             var book = await _bookRepository.GetByIdAsync(bookId, CancellationToken.None);
             if (book == null)
@@ -97,10 +96,10 @@ namespace BookReader.Core.Business
             {
                 pageNumber = book.Bookmark;
             }
-            else if(!useBookmark)
+            else if (!useBookmark)
             {
                 book?.Bookmark = pageNumber;
-                await _bookRepository.SaveChangesAsync();
+                await _bookRepository.SaveChangesAsync(token);
             }
 
             return pageNumber;

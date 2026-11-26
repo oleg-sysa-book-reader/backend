@@ -1,4 +1,4 @@
-﻿using BookReader.Core.DTOs.Models;
+using BookReader.Core.DTOs.Models;
 using BookReader.Core.Entities;
 
 namespace BookReader.Core.Abstract.Services

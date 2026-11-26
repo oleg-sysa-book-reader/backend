@@ -1,4 +1,4 @@
-﻿using BookReader.Core.Abstract.Services;
+using BookReader.Core.Abstract.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

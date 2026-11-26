@@ -1,11 +1,7 @@
-﻿using BookReader.Core.Abstract.Business;
+using System.Text.RegularExpressions;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
 using BookReader.Core.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
 
 namespace BookReader.Core.Business.Parsers
@@ -116,7 +112,7 @@ namespace BookReader.Core.Business.Parsers
             var bookNode = new CompositeNode()
             {
                 NodeType = TextNodeType.Document,
-               // CharsCount = chapters.Sum(c => c.CharsCount),
+                // CharsCount = chapters.Sum(c => c.CharsCount),
             };
 
             bookNode.Children.AddRange(chapters);

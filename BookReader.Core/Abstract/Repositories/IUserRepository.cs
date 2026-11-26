@@ -1,7 +1,4 @@
-﻿using BookReader.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using BookReader.Core.Entities;
 
 namespace BookReader.Core.Abstract.Repositories
 {

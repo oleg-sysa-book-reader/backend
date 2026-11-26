@@ -2,16 +2,13 @@ using BookReader.Core.Abstract.Events;
 using BookReader.Core.Abstract.Repositories;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.Business;
-using BookReader.Core.Business.Parsers;
 using BookReader.Core.Entities;
-using BookReader.Core.Events;
 using BookReader.Core.Services;
 using BookReader.Infrastructure.Persistence;
 using BookReader.Infrastructure.Persistence.Configurations;
 using BookReader.Infrastructure.Repositories;
 using BookReader.Infrastructure.Services;
 using BookReader.Infrastructure.Services.Messaging;
-using BookReader.Infrastructure.Services.Messaging.Handlers;
 using MassTransit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +40,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ILearningService, LearningService>();
         services.AddScoped<IExcelService, ExcelService>();
-        
+
 
         return services;
     }
@@ -56,7 +53,7 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(connectionString));
-       
+
         services.ConfigureCaching(configuration);
         services.Configure<AzureStorageOptions>(configuration.GetSection("AzureStorage"));
 

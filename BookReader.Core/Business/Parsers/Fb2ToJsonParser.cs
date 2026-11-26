@@ -1,12 +1,8 @@
-﻿using BookReader.Core.Abstract.Business;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using BookReader.Core.Abstract.Services;
 using BookReader.Core.DTOs.Models;
 using BookReader.Core.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace BookReader.Core.Business.Parsers
 {
@@ -89,7 +85,7 @@ namespace BookReader.Core.Business.Parsers
                         var sentence = new CompositeNode
                         {
                             NodeType = TextNodeType.Sentence,
-                           // CharsCount = sentenceText.Length
+                            // CharsCount = sentenceText.Length
                         };
 
                         sentence.Attributes.Add(

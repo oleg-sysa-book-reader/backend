@@ -1,5 +1,6 @@
+using System.Security.Claims;
+using System.Text;
 using Azure.Identity;
-using BookReader.Infrastructure.Persistence;
 using BookReader.NotificationService.Abstract;
 using BookReader.NotificationService.Consumers;
 using BookReader.NotificationService.Services;
@@ -10,8 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using System.Security.Claims;
-using System.Text;
 
 namespace BookReader.NotificationService
 {
@@ -93,17 +92,22 @@ namespace BookReader.NotificationService
                 builder.Services.AddMassTransit(x =>
                 {
                     x.AddConsumer<BookNotificationConsumer>();
+                    x.AddConsumer<ExcelNotificationConsumer>();
 
                     if (builder.Configuration.GetValue<bool>("Messaging:ServiceBusEnabled"))
                     {
                         x.UsingAzureServiceBus((context, cfg) =>
                         {
                             cfg.Host(builder.Configuration["ServiceBus:ConnectionString"]);
-                            //cfg.ConfigureEndpoints(context);
                             cfg.ReceiveEndpoint("book-notifications", e =>
                             {
                                 e.ConfigureConsumeTopology = false;
                                 e.ConfigureConsumer<BookNotificationConsumer>(context);
+                            });
+                            cfg.ReceiveEndpoint("excel-notifications", e =>
+                            {
+                                e.ConfigureConsumeTopology = false;
+                                e.ConfigureConsumer<ExcelNotificationConsumer>(context);
                             });
                         });
                     }
@@ -121,6 +125,11 @@ namespace BookReader.NotificationService
                             {
                                 e.ConfigureConsumeTopology = false;
                                 e.ConfigureConsumer<BookNotificationConsumer>(context);
+                            });
+                            cfg.ReceiveEndpoint("excel-notifications", e =>
+                            {
+                                e.ConfigureConsumeTopology = false;
+                                e.ConfigureConsumer<ExcelNotificationConsumer>(context);
                             });
                         });
                     }

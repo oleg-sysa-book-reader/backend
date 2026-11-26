@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using BookReader.Core.Enums;
 
 namespace BookReader.Core.Abstract.Events
 {
     public interface IBusinessEvent
     {
+        EventTypes Type { get; }
     }
 }

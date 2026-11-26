@@ -1,4 +1,4 @@
-﻿namespace BookReader.API.Extensions
+namespace BookReader.API.Extensions
 {
     public static class HttpExtensions
     {
