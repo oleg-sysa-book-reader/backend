@@ -10,6 +10,7 @@ namespace BookReader.Core.Abstract.Repositories
     {
         Task AddWordAsync(LearningWord word, CancellationToken token);
         Task AddWordsAsync(IReadOnlyCollection<LearningWord> words, CancellationToken token);
+        Task<bool> DeleteWordAsync(int userId, int learningWordId, CancellationToken token);
         Task<List<LearningWord>> GetLearningWords(int userId, CancellationToken token, int ? translationId = null);
         Task<List<LearningWordModel>> GetLearningWordsWithValues(int userId, CancellationToken token, int ? translationId = null);
     }

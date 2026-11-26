@@ -26,6 +26,18 @@ namespace BookReader.Infrastructure.Repositories
             await _context.SaveChangesAsync(token);
         }
 
+        public async Task<bool> DeleteWordAsync(int userId, int learningWordId, CancellationToken token)
+        {
+            var learningWord = await _context.LearningWords
+                .FirstOrDefaultAsync(word => word.Id == learningWordId && word.UserId == userId, token);
+            if (learningWord == null)
+                return false;
+
+            _context.LearningWords.Remove(learningWord);
+            await _context.SaveChangesAsync(token);
+            return true;
+        }
+
         public async Task<List<LearningWord>> GetLearningWords(int userId, CancellationToken token, int? translationId = null) =>
             await _context.LearningWords
                 .Where(lw => lw.UserId == userId && (translationId == null || translationId == lw.TranslationId))

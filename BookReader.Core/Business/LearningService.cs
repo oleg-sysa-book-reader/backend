@@ -87,6 +87,19 @@ namespace BookReader.Core.Business
             return new ServiceResult<bool>(true,null);
         }
 
+        public async Task<ServiceResult<bool>> DeleteUserLearningWordAsync(int userId, int learningWordId, CancellationToken token)
+        {
+            var deleted = await _learningRepository.DeleteWordAsync(userId, learningWordId, token);
+            if (!deleted)
+                return new ServiceResult<bool>(false, "Learning word was not found.");
+
+            var updatedVocabulary = await _learningRepository.GetLearningWordsWithValues(userId, token);
+            var cacheKey = CacheExtensions.BuildCacheLearningWordsKey(userId);
+            await _cacheService.SetAsync(cacheKey, updatedVocabulary);
+
+            return new ServiceResult<bool>(true, null);
+        }
+
         public async Task<ServiceResult<LearningWordsResult>> GetUserVocabulary(int userId, int pageSize, int pageNumber, CancellationToken token)
         {
             var cachekey = CacheExtensions.BuildCacheLearningWordsKey(userId);

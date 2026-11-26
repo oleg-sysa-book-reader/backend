@@ -23,6 +23,17 @@ namespace BookReader.API.Controllers
                 StatusCodes.Status400BadRequest;
             return GenerateResponse(code, res);
         }
+
+        [HttpDelete("{learningWordId:int}")]
+        public async Task<IActionResult> DeleteLearningWord(int learningWordId, CancellationToken token)
+        {
+            var res = await _learningService.DeleteUserLearningWordAsync(UserId, learningWordId, token);
+            var code = res.IsSuccess ?
+                StatusCodes.Status200OK :
+                StatusCodes.Status404NotFound;
+            return GenerateResponse(code, res);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetUserVocabulary([FromQuery]BasePaginationRequest request, CancellationToken token)
         {
